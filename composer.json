@@ -1,6 +1,7 @@
 {
     "version": "1.0.0",
     "name": "phpvlm/phpvlm",
+    "type": "project",
     "authors": [{
         "name": "José Augusto",
         "email": "devjesus.br@outlook.com"
