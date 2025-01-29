@@ -1,9 +1,9 @@
 {
-    "version": "5.0.1",
-    "name": "phpparchment/phpparchment",
+    "version": "1.0.0",
+    "name": "vlm/vlm",
     "authors": [{
         "name": "José Augusto",
-        "email": "jose.jesus@gbmx.com.br"
+        "email": "devjesus.br@outlook.com"
     }],
     "require": {
         "league/plates": "^3.4",
@@ -32,7 +32,5 @@
     "license": [
         "MIT"
     ],
-    "require-dev": {
-        "phpstan/phpstan": "^1.10"
-    }
+    "require-dev": {}
 }
