@@ -15,9 +15,10 @@ class Router
 
     public function __construct()
     {
+
         $this->uri = Uri::get();
         $this->method = RequestType::get();
-        $this->routesRegistered = require($_ENV["APP_PATH"] . "/src/routes/Routes.php");
+        $this->routesRegistered = require(__DIR__ . '/../routes/Routes.php');
     }
 
     /**

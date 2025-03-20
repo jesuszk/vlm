@@ -99,7 +99,7 @@ class Controller
     {
         $uri = Uri::get();
         $requestMethod = RequestType::get();
-        $routes = require($_ENV["APP_PATH"] . "/src/routes/Routes.php");
+        $routes = require(__DIR__ . '/../routes/Routes.php');
         $routesClean = $this->clearRoutesWithoutMiddlewares($routes, $requestMethod);
 
 
@@ -182,7 +182,7 @@ class Controller
                     0,
                     $position
                 );
-            }else
+            } else
                 $routes[$requestMethod][$routeKey] = $routeValue;
         }
         return $routes;

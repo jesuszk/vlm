@@ -2,9 +2,10 @@
 
 namespace src\routes;
 
+use src\controllers\ExampleController;
 
-$router = new Router;
+$r = new Router;
 
+$r->get('/', ExampleController::class, 'index');
 
-
-return $router->init();
+return $r->init();
