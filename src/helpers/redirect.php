@@ -23,9 +23,13 @@ function redirect(string $to)
  */
 function route(string $routeName, array $indexes = [])
 {
-    $r = findUriByName(Route::routes(), $routeName);
 
+    $r = findUriByName(Route::routes(), $routeName);
     if ($r) {
+
+        if (substr_count($r['uri'], '{') !== count($indexes))
+            throw new Exception('route.missing.parameters ' . $routeName, 500);
+
         if (str_contains($r['uri'], '{')) {
             foreach ($indexes as $key => $index) {
                 $r['uri'] = str_replace('{' . $key . '}', $index, $r['uri']);
@@ -44,7 +48,6 @@ function findUriByName(array $routes, string $name)
 {
     foreach ($routes as $method => $routeGroup) {
         foreach ($routeGroup as $uri => $route) {
-            // Verifica se o índice 'name' existe e se o valor corresponde
             if (isset($route['name']) && $route['name'] === $name) {
                 return ['uri' => $uri, 'info' => $route];
             }

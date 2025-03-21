@@ -39,7 +39,7 @@ class Controller
 
 
         if (!$response)
-            dd("Error: Missing return in your controller: {$controller}");
+            throw new Exception("Missing return in your controller: {$controller}", 500);
 
 
         if ($response instanceof Redirect)
@@ -63,7 +63,7 @@ class Controller
     private function certifyRouter(string $router): array
     {
         if (substr_count($router, '@') <= 0)
-            throw new Exception("A rota está registrada com o formato errado");
+            throw new Exception("route.wrong", 500);
 
         return explode('@', $router);
     }
@@ -71,7 +71,7 @@ class Controller
     private function certifyIfControllerExists(string $controller): void
     {
         if (!class_exists($controller))
-            throw new Exception("O controller ({$controller}) não existe");
+            throw new Exception("controller.unavailable ({$controller})", 500);
     }
 
     /**
@@ -81,7 +81,7 @@ class Controller
     private function certifyIfMethodExists(string $controller, string $method): void
     {
         if (!method_exists($controller, $method)) {
-            throw new Exception("O método ({$method}) não existe.");
+            throw new Exception("method.unavailable ({$controller}:{$method})", 500);
         }
     }
 

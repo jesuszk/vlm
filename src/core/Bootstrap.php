@@ -3,6 +3,8 @@
 namespace src\core;
 
 use Exception;
+use src\support\Uri;
+use src\support\View;
 
 class Bootstrap
 {
@@ -11,13 +13,17 @@ class Bootstrap
     {
         try {
             $r = (new Router)->get();
-            if (!$r)
-                throw new Exception("A rota informada não está disponível", 500);
+            if (!$r) {
+                $uri = Uri::get();
+                throw new Exception("route.unavailable", 500);
+            }
 
             self::executeMiddlewares($r['middlewares']);
             (new Controller(self::getOnlyClassAndMethod(implode('@', $r['action']))));
         } catch (Exception $e) {
-            dd("Error ({$e->getCode()}):" . $e->getMessage());
+            $message = $e->getMessage();
+            $r = View::render('templates.error', ['mssg' => $message, 'code' => $e->getCode()]);
+            echo $r::$isString;
         }
     }
 

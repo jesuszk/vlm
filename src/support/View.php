@@ -39,6 +39,6 @@ final class View
     {
         $viewPath = "./src/views/{$view}.php";
         if (!file_exists($viewPath))
-            throw new Exception("A view ({$view}) não existe");
+            throw new Exception("view.unavailable " . $viewPath, 500);
     }
 }
