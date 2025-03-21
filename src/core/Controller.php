@@ -99,7 +99,7 @@ class Controller
     {
         $uri = Uri::get();
         $requestMethod = RequestType::get();
-        $routes = require(__DIR__ . '/../routes/Routes.php');
+        $routes = Route::routes();
         $routesClean = $this->clearRoutesWithoutMiddlewares($routes, $requestMethod);
 
 
@@ -175,15 +175,9 @@ class Controller
      */
     private function clearRoutesWithoutMiddlewares(array $routes, string $requestMethod): array
     {
+
         foreach ($routes[$requestMethod] as $routeKey => $routeValue) {
-            if ($position = strpos($routeValue, ":")) {
-                $routes[$requestMethod][$routeKey] = mb_substr(
-                    $routeValue,
-                    0,
-                    $position
-                );
-            } else
-                $routes[$requestMethod][$routeKey] = $routeValue;
+            $routes[$requestMethod][$routeKey] = implode('@', (array) $routeValue['action']);
         }
         return $routes;
     }

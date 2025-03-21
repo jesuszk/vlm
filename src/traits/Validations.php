@@ -20,8 +20,8 @@ trait Validations
         if(is_string($input)){
             $message = '';
             if (!filter_input(INPUT_POST, $field, FILTER_VALIDATE_EMAIL)) {
-                if ($_ENV["LANG"] === 'en') $message = "The email provided is not valid";
-                else if ($_ENV["LANG"] === 'pt-br') $message = "O e-mail fornecido não é válido";
+                if ($_ENV["APP_LANGUAGE"] === 'en-us') $message = "The email provided is not valid";
+                else if ($_ENV["APP_LANGUAGE"] === 'pt-br') $message = "O e-mail fornecido não é válido";
                 IsWrong::set($field, $message);
                 return null;
             }
@@ -43,8 +43,8 @@ trait Validations
         $data = Request::input($field);
         if (is_string($data)) {
             if (strlen($data) > $length) {
-                if ($_ENV["LANG"] === 'en') $message = "Field limit is {$length} characters";
-                else if ($_ENV["LANG"] === 'pt-br') $message = "O limite do campo é de {$length} caracteres";
+                if ($_ENV["APP_LANGUAGE"] === 'en-us') $message = "Field limit is {$length} characters";
+                else if ($_ENV["APP_LANGUAGE"] === 'pt-br') $message = "O limite do campo é de {$length} caracteres";
                 IsWrong::set($field, $message);
                 return null;
             }
@@ -64,8 +64,8 @@ trait Validations
         $data = Request::input($field);
         if (empty($data)) {
             if ($data !== '0') {
-                if ($_ENV["LANG"] === 'en') $message = "The field is required";
-                else if ($_ENV["LANG"] === 'pt-br') $message = "O campo é obrigatório";
+                if ($_ENV["APP_LANGUAGE"] === 'en-us') $message = "The field is required";
+                else if ($_ENV["APP_LANGUAGE"] === 'pt-br') $message = "O campo é obrigatório";
                 IsWrong::set($field, $message);
                 return null;
             }

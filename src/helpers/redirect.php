@@ -1,5 +1,6 @@
 <?php
 
+use src\core\Route;
 
 /**
  * Its responsible for redirect for another link/url
@@ -20,9 +21,36 @@ function redirect(string $to)
  * @param string $route
  * @return string
  */
-function route(string $route)
+function route(string $routeName, array $indexes = [])
 {
-    return $_ENV["APP_URL"] . $route;
+    $r = findUriByName(Route::routes(), $routeName);
+
+    if ($r) {
+        if (str_contains($r['uri'], '{')) {
+            foreach ($indexes as $key => $index) {
+                $r['uri'] = str_replace('{' . $key . '}', $index, $r['uri']);
+            }
+        }
+    }
+
+
+    if (!$r)
+        throw new Exception('Não foi possível encontrar uma rota com o nome: ' . $routeName);
+    return $r['uri'];
+}
+
+
+function findUriByName(array $routes, string $name)
+{
+    foreach ($routes as $method => $routeGroup) {
+        foreach ($routeGroup as $uri => $route) {
+            // Verifica se o índice 'name' existe e se o valor corresponde
+            if (isset($route['name']) && $route['name'] === $name) {
+                return ['uri' => $uri, 'info' => $route];
+            }
+        }
+    }
+    return null;
 }
 
 /**

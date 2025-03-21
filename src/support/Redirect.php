@@ -19,7 +19,7 @@ final class Redirect
      */
     public static function to(string $uri): Redirect
     {
-        self::$redirect = route($uri);
+        self::$redirect = $_ENV['APP_URL'] . $uri;
         return new static;
     }
 }

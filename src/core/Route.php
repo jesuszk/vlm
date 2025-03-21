@@ -1,0 +1,141 @@
+<?php
+
+namespace src\core;
+
+use src\support\Uri;
+
+class Route
+{
+
+    private static array $routes = ["get" => [], "post" => []];
+
+    private static ?string $lastUri = null;
+
+
+    public static function routes()
+    {
+        return self::$routes;
+    }
+
+
+
+    private static function add(string $method, string $uri, string $controller, string $controllerMethod, array $middlewares = []): self
+    {
+        if (strlen($uri) > 1)
+            $uri = rtrim($uri, '/');
+        self::$routes[strtolower($method)]["{$uri}"] = [
+            "action" => ['controller' => $controller, "method" => $controllerMethod],
+            "middlewares" => $middlewares,
+            "name" => ''
+        ];
+        self::$lastUri = $uri;
+        return new self;
+    }
+
+
+    /**
+     * Responsible for adding a get type route
+     * @param string $endpoint
+     * @param string $controller
+     * @param string $method
+     * @param array<int, string> $middlewares
+     */
+    public static function get(string $endpoint, string $controller, string $method, array $middlewares = [])
+    {
+        return self::add('get', $endpoint, $controller, $method, $middlewares);
+    }
+
+    /**
+     * Responsible for adding a post type route
+     * @param string $endpoint
+     * @param string $controller
+     * @param string $method
+     * @param array<int, string> $middlewares
+     */
+    public static function post(string $endpoint, string $controller, string $method, array $middlewares = []): self
+    {
+        return self::add('post', $endpoint, $controller, $method, $middlewares);
+    }
+
+
+    /**
+     * Responsible for receiving and executing the meddlewares
+     * 
+     * @param array<int, string> $middlewares
+     * @param string $prefix
+     */
+    public static function middlewares(array $middlewares = []): self
+    {
+        foreach ($middlewares as $middlewareKey => $middleware) {
+            (new $middleware)->execute();
+        }
+        return new self;
+    }
+
+
+
+    public static function name(string $name): self
+    {
+        $methodKeys = array_keys(self::$routes);
+        foreach ($methodKeys as $method) {
+            if (isset(self::$routes[$method][self::$lastUri])) {
+                self::$routes[$method][self::$lastUri]['name'] = $name;
+                break;
+            }
+        }
+        return new self;
+    }
+
+
+    public static function whereInt(string|array $binds): self
+    {
+        $methodKeys = array_keys(self::$routes);
+        foreach ($methodKeys as $method) {
+            if (isset(self::$routes[$method][self::$lastUri])) {
+                if (is_array($binds)) {
+                    foreach ($binds as $key => $bind) {
+                        self::$routes[$method][self::$lastUri]['bind'][$bind] = '[0-9]+';
+                    }
+                } else
+                    self::$routes[$method][self::$lastUri]['bind'][$binds] = '[0-9]+';
+                break;
+            }
+        }
+        return new self;
+    }
+
+
+    public static function whereString(string|array $binds): self
+    {
+        $methodKeys = array_keys(self::$routes);
+        foreach ($methodKeys as $method) {
+            if (isset(self::$routes[$method][self::$lastUri])) {
+                if (is_array($binds)) {
+                    foreach ($binds as $key => $bind) {
+                        self::$routes[$method][self::$lastUri]['bind'][$bind] = '[a-zA-z0-9-_]+';
+                    }
+                } else
+                    self::$routes[$method][self::$lastUri]['bind'][$binds] = '[a-zA-z0-9-_]+';
+                break;
+            }
+        }
+        return new self;
+    }
+
+    public static function whereUuid(string|array $binds): self
+    {
+        $methodKeys = array_keys(self::$routes);
+        foreach ($methodKeys as $method) {
+            if (isset(self::$routes[$method][self::$lastUri])) {
+                if (is_array($binds)) {
+                    foreach ($binds as $key => $bind) {
+                        self::$routes[$method][self::$lastUri]['bind'][$bind] = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
+                    }
+                } else
+                    self::$routes[$method][self::$lastUri]['bind'][$binds] = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
+                break;
+            }
+        }
+        return new self;
+    }
+}

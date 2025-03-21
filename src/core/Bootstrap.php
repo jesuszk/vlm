@@ -10,14 +10,12 @@ class Bootstrap
     public static function run(): void
     {
         try {
-            $classMethodAndMiddlewares = (new Router)->get();
-
-            if (!$classMethodAndMiddlewares)
+            $r = (new Router)->get();
+            if (!$r)
                 throw new Exception("A rota informada não está disponível", 500);
 
-            self::executeMiddlewares($classMethodAndMiddlewares);
-
-            (new Controller(self::getOnlyClassAndMethod($classMethodAndMiddlewares)));
+            self::executeMiddlewares($r['middlewares']);
+            (new Controller(self::getOnlyClassAndMethod(implode('@', $r['action']))));
         } catch (Exception $e) {
             dd("Error ({$e->getCode()}):" . $e->getMessage());
         }
@@ -31,32 +29,10 @@ class Bootstrap
     }
 
 
-    private static function executeMiddlewares(string $classAndMethod): void
+    private static function executeMiddlewares(array $middlewares): void
     {
-        foreach (self::getMiddlewaresFromRoute($classAndMethod) as $middleware) {
+        foreach ($middlewares as $middleware) {
             new $middleware();
         }
-    }
-
-
-    /**
-     * @param string $classAndMethod
-     * 
-     * @return array<int, string>
-     */
-    private static function getMiddlewaresFromRoute(string $classAndMethod): array
-    {
-        $middlewares = [];
-        if (str_contains($classAndMethod, ':')) {
-            $middlewares =  array_filter(
-                array_filter(
-                    explode(":", $classAndMethod),
-                    function ($r) {
-                        return !str_contains($r, '@');
-                    }
-                )
-            );
-        }
-        return $middlewares;
     }
 }

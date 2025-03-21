@@ -2,6 +2,7 @@
 
 namespace src\core;
 
+
 use src\support\RequestType;
 use src\support\Uri;
 
@@ -15,18 +16,18 @@ class Router
 
     public function __construct()
     {
-
+        require __DIR__ . '/../routes/routes.php';
         $this->uri = Uri::get();
         $this->method = RequestType::get();
-        $this->routesRegistered = require(__DIR__ . '/../routes/Routes.php');
+        $this->routesRegistered = Route::routes();
     }
 
     /**
      * Method for obtaining simple routes
      * 
-     * @return string|null
+     * @return array|null
      */
-    private function simpleRouter(): string|null
+    private function simpleRouter(): array|null
     {
         return $this->routesRegistered[$this->method][$this->uri] ?? null;
     }
@@ -35,18 +36,27 @@ class Router
     /**
      * Method obtains dynamic routes
      * 
-     * @return string|null
+     * @return array|null
      */
-    private function dynamicRouter(): string|null
+    private function dynamicRouter(): array|null
     {
         $routerRegisteredFound = null;
 
         foreach ($this->routesRegistered[$this->method] as $index => $route) {
+
+            if (isset($route['bind'])) {
+                foreach ((array) $route['bind'] as $param => $regex) {
+                    $index = str_replace('{' . $param . '}', $regex, $index);
+                }
+            } else {
+                // $index = str_replace('{id}', '[0-9]+', $index);
+                $index = preg_replace('/\{.*?\}/', '[a-zA-Z0-9-_]+', $index);
+            }
             $regex = str_replace('/', '\/', ltrim($index, '/'));
             if ($index !== '/' and preg_match("/^$regex$/", ltrim($this->uri, '/')))
-                return $route;
+                return (array) $route;
         }
-        
+
         return $routerRegisteredFound;
     }
 
@@ -54,9 +64,9 @@ class Router
     /**
      * Processes the beginning to get simple or dynamic routes
      * 
-     * @return string|null
+     * @return array|null
      */
-    public function get(): string|null
+    public function get(): array|null
     {
         return $this->simpleRouter() ?: $this->dynamicRouter();
     }

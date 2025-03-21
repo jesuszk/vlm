@@ -12,7 +12,11 @@ class Uri
         /** @var string */
         $urlParsed = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         $uri = array_filter(explode('/', trim($urlParsed)));
-        unset($uri[1], $uri[2]);
+
+        for ($i = 1; $i <= (int) $_ENV['OFFSET_URI']; $i++) {
+            unset($uri[$i]);
+        }
+        
         return $uri = '/' . implode('/', $uri);
     }
 }
