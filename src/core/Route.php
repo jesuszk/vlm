@@ -138,4 +138,19 @@ class Route
         }
         return new self;
     }
+
+    public static function where(array $data)
+    {
+        foreach ($data as $key => $value) {
+            if ($key === 'int')
+                self::whereInt($value);
+
+            else if ($key === 'string')
+                self::whereString($value);
+
+            else if ($key === 'uuid')
+                self::whereInt($value);
+        }
+        return new self;
+    }
 }

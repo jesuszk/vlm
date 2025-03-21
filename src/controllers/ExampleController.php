@@ -28,9 +28,9 @@ class ExampleController extends Controller
         dd('content: ' . $t);
     }
 
-    public function manyParams(string $n, string $p)
+    public function manyParams(string $n, string $p, string $novo)
     {
-        dd($n, $p);
+        dd($n, $p, $novo);
     }
 
     public function uuid(string $uuid)
