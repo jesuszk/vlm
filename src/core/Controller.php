@@ -18,9 +18,9 @@ class Controller
 
     public function __construct(string $router)
     {
-        list($controller, $method) = $this->certifyRouter($router);
-        $this->certifyIfControllerExists($controller);
-        $this->certifyIfMethodExists($controller, $method);
+        [$controller, $method] = $this->validateRoute($router);
+        $this->validateController($controller);
+        $this->validateMethod($controller, $method);
         $this->execute($router, $controller, $method);
     }
 
@@ -28,6 +28,8 @@ class Controller
     public function execute(string $router, string $controller, string $method): void
     {
         $params = $this->getParamsInRoute($router);
+
+
         /** @var Container */
         $container = $this->startContainerInjection();
         $controllerObject = $container->get($controller);
@@ -37,22 +39,14 @@ class Controller
         $response = $this->handleRequest($controller, $method, $controllerObject, $container, $params);
 
 
-
         if (!$response)
-            throw new Exception("Missing return in your controller: {$controller}", 500);
+            throw new Exception("Controlller's return content empty: {$controller}", 500);
 
 
         if ($response instanceof Redirect)
             redirect($response::$redirect);
-
-
-
-        if (in_array(true, [
-            $response instanceof View,
-            $response instanceof Json
-        ])) {
+        else if (in_array(true, [$response instanceof View, $response instanceof Json])) {
             echo $response::$isString;
-            die;
         }
     }
 
@@ -60,7 +54,7 @@ class Controller
      * @param string $router
      * @return array<int, string>
      */
-    private function certifyRouter(string $router): array
+    private function validateRoute(string $router): array
     {
         if (substr_count($router, '@') <= 0)
             throw new Exception("route.wrong", 500);
@@ -68,7 +62,7 @@ class Controller
         return explode('@', $router);
     }
 
-    private function certifyIfControllerExists(string $controller): void
+    private function validateController(string $controller): void
     {
         if (!class_exists($controller))
             throw new Exception("controller.unavailable ({$controller})", 500);
@@ -78,7 +72,7 @@ class Controller
      * @param string $controller
      * @param string $method
      */
-    private function certifyIfMethodExists(string $controller, string $method): void
+    private function validateMethod(string $controller, string $method): void
     {
         if (!method_exists($controller, $method)) {
             throw new Exception("method.unavailable ({$controller}:{$method})", 500);
@@ -141,24 +135,16 @@ class Controller
             $parameters = $reflection->getMethod($method)->getParameters();
 
             $params = $params ?: [];
-            $parametersInterface = [];
-            $parametersNotInterface = [];
+            $paramsSpecials = [];
 
             if ($parameters) {
                 foreach ($parameters as $parameterFromMethod) {
-                    /** @var ReflectionNamedType */
-                    $reflectionNamedType = $parameterFromMethod->getType();
-                    $parameterNameAbsolute = $reflectionNamedType->getName();
-
-                    if (str_contains($parameterNameAbsolute, "interface")) {
-                        $parametersInterface[] = $container->get($parameterNameAbsolute);
-                    } else {
-                        if (!in_array($parameterNameAbsolute, ["string", "int", "bool", "float"])) {
-                            $parametersNotInterface[] = (new $parameterNameAbsolute());
-                        }
+                    $parameterNameAbsolute = $parameterFromMethod->getType()->getName();
+                    if (!in_array($parameterNameAbsolute, ["string", "int", "bool", "float"])) {
+                        $paramsSpecials[] = (new $parameterNameAbsolute());
                     }
                 }
-                $response = $controllerObject->$method(...$parametersInterface, ...$parametersNotInterface, ...$params);
+                $response = $controllerObject->$method(...$paramsSpecials, ...$params);
             } else
                 $response = $controllerObject->$method(...$params);
 

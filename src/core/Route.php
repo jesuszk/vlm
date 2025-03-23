@@ -2,8 +2,6 @@
 
 namespace src\core;
 
-use src\support\Uri;
-
 class Route
 {
 
