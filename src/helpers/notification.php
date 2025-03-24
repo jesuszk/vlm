@@ -6,7 +6,7 @@
  * @param string $type - The type of message
  * @return void
  */
-function notification(string $message, string $type, string $local = "top-right", int $time = 5000): void
+function show_notification(string $message, string $type, string $local = "top-right", int $time = 5000): void
 {
     $_SESSION["notifications"][] = [
         "type" => $type,
@@ -36,4 +36,29 @@ function viewingNotifications(): void
         }
         unset($_SESSION["notifications"]);
     }
+}
+
+
+
+function notification()
+{
+    return new class {
+        public function success(string $m)
+        {
+            show_notification($m, 'success');
+            return $this;
+        }
+
+        public function error(string $m)
+        {
+            show_notification($m, 'error');
+            return $this;
+        }
+
+        public function warning(string $m)
+        {
+            show_notification($m, 'warning');
+            return $this;
+        }
+    };
 }

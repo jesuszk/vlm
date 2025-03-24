@@ -30,17 +30,6 @@ function getElement(inputId) {
   return false;
 }
 
-/**
- * Responsible for displaying or hiding the loader
- * @param {String} action
- */
-function loader(action) {
-  let loaderWrapper = document.querySelector(".loader-wrapper");
-  if (loaderWrapper) {
-    if (action === "show") loaderWrapper.classList.add("active");
-    else if (action === "hidden") loaderWrapper.classList.remove("active");
-  }
-}
 
 /**
  * This method aims to set the value of a field through the ID

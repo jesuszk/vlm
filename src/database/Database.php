@@ -9,31 +9,53 @@ use PDOException;
 
 class Database
 {
-    protected ?PDO $pdo = null;
-    protected ?string $typeConnection = null;
-    protected ?string $host = null;
-    protected ?string $dbname = null;
-    protected ?string $username = null;
-    protected ?string $password = null;
-    protected ?string $service = null;
-    protected ?string $server = null;
+    protected static ?PDO $pdo = null;
+    protected static ?string $typeConnection = null;
+    protected static ?string $host = null;
+    protected static ?string $dbname = null;
+    protected static ?string $username = null;
+    protected static ?string $password = null;
+    protected static ?string $service = null;
+    protected static ?string $server = null;
 
-
-    function get()
+    static function config(string $type, string $host, string $dbname, string $username, string $password, ?string $service = null, ?string $server = null)
     {
-        return $this->connect();
+        self::$typeConnection = $type;
+        self::$host = $host;
+        self::$dbname = $dbname;
+        self::$username = $username;
+        self::$password = $password;
+        self::$service = $service;
+        self::$server = $server;
+    }
+
+    static function get()
+    {
+        return self::connect();
+    }
+
+    static function local()
+    {
+        self::config(
+            type: 'mysql',
+            host: 'localhost',
+            dbname: 'thezarkiumgroup',
+            username: 'root',
+            password: 'zarkium'
+        );
+        return self::get();
     }
 
     /**
      * Method performs the database connection
      * @return PDO
      */
-    protected function connect(): PDO
+    protected static function connect(): PDO
     {
         try {
-            $this->pdo = new PDO($this->getDsn(), $this->username, $this->password);
-            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            return $this->pdo;
+            self::$pdo = new PDO(self::dns(), self::$username, self::$password);
+            self::$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            return self::$pdo;
         } catch (PDOException $e) {
             dd("Erro ao conectar com o banco de dados: " . $e->getMessage());
         }
@@ -44,17 +66,17 @@ class Database
      * 
      * @return string
      */
-    protected function getDsn(): string
+    protected static function dns(): string
     {
-        switch ($this->typeConnection) {
+        switch (self::$typeConnection) {
             case 'mysql':
-                return "mysql:host=" . $this->host . ";dbname=" . $this->dbname . ";charset=utf8mb4";
+                return "mysql:host=" . self::$host . ";dbname=" . self::$dbname . ";charset=utf8mb4";
             case 'sqlserver':
-                return "sqlsrv:Server=" . $this->host . ";Database=" . $this->dbname . "";
+                return "sqlsrv:Server=" . self::$host . ";Database=" . self::$dbname . "";
             case 'informix':
-                return "informix:host=" . $this->host . "; service=" . $this->service . "; database=" . $this->dbname . "; server=" . $this->server . "; protocol=olsoctcp";
+                return "informix:host=" . self::$host . "; service=" . self::$service . "; database=" . self::$dbname . "; server=" . self::$server . "; protocol=olsoctcp";
             default:
-                throw new Exception("Tipo de conexão inválido: " . $this->typeConnection . "");
+                throw new Exception("Tipo de conexão inválido: " . self::$typeConnection . "");
         }
     }
 }

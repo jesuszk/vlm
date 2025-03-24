@@ -5,7 +5,7 @@ namespace src\controllers;
 use src\core\Controller;
 
 
-class ExampleController extends Controller
+class ExampleController
 {
     function __construct() {}
 }

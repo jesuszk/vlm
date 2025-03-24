@@ -2,13 +2,15 @@
 
 namespace src\repositories;
 
+use Exception;
 use PDO;
 use PDOException;
 use Ramsey\Uuid\Rfc4122\UuidV4;
 use src\database\Database;
+use src\exceptions\pdo\ColumnDoesntHaveADefaultValueException;
 use stdClass;
 
-class NexusRepository
+class Querio
 {
 
     public PDO $db;
@@ -181,11 +183,15 @@ class NexusRepository
             if (!is_string($firstWord)) {
                 return false;
             }
-            $isSelect = strtolower(trim($firstWord)) === "select";
+            $operation = strtolower(trim($firstWord));
+            $isSelect = $operation === 'select';
 
             if (!$isSelect) {
                 $stmt = $this->db->prepare($this->queryString);
-                return $stmt->execute($this->bind ?? []);
+                $r = $stmt->execute($this->bind ?? []);
+                if ($operation === 'insert')
+                    return $this->db->lastInsertId();
+                return $r;
             } else {
                 if ($this->selectIsOne)
                     $this->limit();
@@ -211,6 +217,11 @@ class NexusRepository
                 }
             }
         } catch (PDOException $e) {
+            if (str_contains($e->getMessage(), "doesn't have a default value")) {
+                throw new ColumnDoesntHaveADefaultValueException(['message from pdo' => $e->errorInfo[2]]);
+            } else if (str_contains($e->getMessage(), 'Base table or view not found')) {
+                throw new ColumnDoesntHaveADefaultValueException(['message from pdo' => $e->errorInfo[2]]);
+            }
             return false;
         }
     }

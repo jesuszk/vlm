@@ -49,7 +49,6 @@ class Router
                     $index = str_replace('{' . $param . '}', $regex, $index);
                 }
             } else {
-                // $index = str_replace('{id}', '[0-9]+', $index);
                 $index = preg_replace('/\{.*?\}/', '[a-zA-Z0-9-_]+', $index);
             }
             $regex = str_replace('/', '\/', ltrim($index, '/'));

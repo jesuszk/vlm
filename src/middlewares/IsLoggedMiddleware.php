@@ -8,7 +8,7 @@ class IsLoggedMiddleware
     function execute(): void
     {
         if (!isset($_SESSION['user_id'])) {
-        //    redirect("/login");
+           redirect()->route('login')->header();
         }
     }
 }

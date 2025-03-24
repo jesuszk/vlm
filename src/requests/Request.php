@@ -56,8 +56,9 @@ abstract class Request
     public function execute(): array
     {
         if (!formValidate($this->rules())) {
-            notification("Whoops! Não foi possível prosseguir com a solicitação.", 'error');
-            redirect(url_back());
+            notification()->error('Verifique todos os campos antes de prosseguir');
+            redirect()->back()->make();
+            die;
         }
         return [];
     }

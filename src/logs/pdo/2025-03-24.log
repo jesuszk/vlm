@@ -1,0 +1,7 @@
+Error: Coluna com valor pendente | Code: 500 | When: 2025-03-24 01:38:11 | Content: {"message from pdo":"Field 'created_at' doesn't have a default value"}
+Error: Coluna com valor pendente | Code: 500 | When: 2025-03-24 01:53:20 | Content: {"message from pdo":"Table 'thezarkiumgroup.productsx' doesn't exist"}
+Error: Coluna com valor pendente | Code: 500 | When: 2025-03-24 01:54:05 | Content: {"message from pdo":"Table 'thezarkiumgroup.productsx' doesn't exist"}
+Error: Coluna com valor pendente | Code: 500 | When: 2025-03-24 01:54:27 | Content: {"message from pdo":"Table 'thezarkiumgroup.productsx' doesn't exist"}
+Error: Coluna com valor pendente | Code: 500 | When: 2025-03-24 01:54:59 | Content: {"message from pdo":"Table 'thezarkiumgroup.productsx' doesn't exist"}
+Error: Coluna com valor pendente | Code: 500 | When: 2025-03-24 01:55:02 | Content: {"message from pdo":"Table 'thezarkiumgroup.productsx' doesn't exist"}
+Error: Coluna com valor pendente | Code: 500 | When: 2025-03-24 01:55:04 | Content: {"message from pdo":"Table 'thezarkiumgroup.productsx' doesn't exist"}

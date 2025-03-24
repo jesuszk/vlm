@@ -4,6 +4,9 @@ namespace src\core;
 
 use DI\Container;
 use Exception;
+use RedirectBack;
+use RedirectRoute;
+use RedirectUri;
 use ReflectionClass;
 use ReflectionNamedType;
 use src\support\Json;
@@ -35,7 +38,7 @@ class Controller
         $controllerObject = $container->get($controller);
 
 
-        /** @var Redirect|View|Json|null */
+        /** @var RedirectUri|RedirectBack|RedirectRoute|View|Json|null */
         $response = $this->handleRequest($controller, $method, $controllerObject, $container, $params);
 
 
@@ -43,9 +46,13 @@ class Controller
             throw new Exception("Controlller's return content empty: {$controller}", 500);
 
 
-        if ($response instanceof Redirect)
-            redirect($response::$redirect);
-        else if (in_array(true, [$response instanceof View, $response instanceof Json])) {
+
+
+        if (in_array(true, [$response instanceof RedirectUri, $response instanceof RedirectRoute])) {
+            header("Location: {$_ENV['APP_URL']}{$response->uri}");
+        } else if ($response instanceof RedirectBack) {
+            header('Location: ' . $response->uri);
+        } else if (in_array(true, [$response instanceof View, $response instanceof Json])) {
             echo $response::$isString;
         }
     }
