@@ -45,4 +45,10 @@ class ProductController
             return redirect()->back();
         }
     }
+
+
+    function varios(string $uuidv1, string $uuidv2)
+    {
+        dd($uuidv1, $uuidv2);
+    }
 }

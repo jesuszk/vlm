@@ -41,12 +41,10 @@ class Router
     private function dynamicRouter(): array|null
     {
         $routerRegisteredFound = null;
-
         foreach ($this->routesRegistered[$this->method] as $index => $route) {
-
             if (isset($route['bind'])) {
-                foreach ((array) $route['bind'] as $param => $regex) {
-                    $index = str_replace('{' . $param . '}', $regex, $index);
+                foreach ((array) $route['bind'] as $r) {
+                    $index = str_replace('{' . $r['param'] . '}', $r['regex'], $index);
                 }
             } else {
                 $index = preg_replace('/\{.*?\}/', '[a-zA-Z0-9-_]+', $index);

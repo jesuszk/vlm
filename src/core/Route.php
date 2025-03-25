@@ -6,7 +6,6 @@ class Route
 {
 
     private static array $routes = ["get" => [], "post" => []];
-
     private static ?string $lastUri = null;
 
 
@@ -92,10 +91,10 @@ class Route
             if (isset(self::$routes[$method][self::$lastUri])) {
                 if (is_array($binds)) {
                     foreach ($binds as $key => $bind) {
-                        self::$routes[$method][self::$lastUri]['bind'][$bind] = '[0-9]+';
+                        self::$routes[$method][self::$lastUri]['bind'][] = ['param' => $bind, 'regex' => '[0-9]+'];
                     }
                 } else
-                    self::$routes[$method][self::$lastUri]['bind'][$binds] = '[0-9]+';
+                    self::$routes[$method][self::$lastUri]['bind'][] = ['param' => $binds, 'regex' => '[0-9]+'];
                 break;
             }
         }
@@ -110,10 +109,10 @@ class Route
             if (isset(self::$routes[$method][self::$lastUri])) {
                 if (is_array($binds)) {
                     foreach ($binds as $key => $bind) {
-                        self::$routes[$method][self::$lastUri]['bind'][$bind] = '[a-zA-z0-9-_]+';
+                        self::$routes[$method][self::$lastUri]['bind'][] = ['param' => $bind, 'regex' => '[a-zA-z0-9-_]+'];
                     }
                 } else
-                    self::$routes[$method][self::$lastUri]['bind'][$binds] = '[a-zA-z0-9-_]+';
+                    self::$routes[$method][self::$lastUri]['bind'][] = ['param' => $binds, 'regex' => '[a-zA-z0-9-_]+'];
                 break;
             }
         }
@@ -127,10 +126,10 @@ class Route
             if (isset(self::$routes[$method][self::$lastUri])) {
                 if (is_array($binds)) {
                     foreach ($binds as $key => $bind) {
-                        self::$routes[$method][self::$lastUri]['bind'][$bind] = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
+                        self::$routes[$method][self::$lastUri]['bind'][] = ['param' => $bind, 'regex' => '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'];
                     }
                 } else
-                    self::$routes[$method][self::$lastUri]['bind'][$binds] = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
+                    self::$routes[$method][self::$lastUri]['bind'][] = ['param' => $binds, 'regex' => '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'];
                 break;
             }
         }
@@ -139,15 +138,17 @@ class Route
 
     public static function where(array $data)
     {
-        foreach ($data as $key => $value) {
-            if ($key === 'int')
-                self::whereInt($value);
 
-            else if ($key === 'string')
-                self::whereString($value);
 
-            else if ($key === 'uuid')
-                self::whereInt($value);
+        foreach ($data as $param => $type) {
+            if ($type === 'int')
+                self::whereInt($param);
+
+            else if ($type === 'string')
+                self::whereString($param);
+
+            else if ($type === 'uuid')
+                self::whereUuid($param);
         }
         return new self;
     }
