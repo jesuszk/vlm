@@ -9,7 +9,7 @@ use src\support\View;
 class Bootstrap
 {
 
-    public static function do(): void
+    public static function start(): void
     {
         try {
             $r = (new Router)->get();
