@@ -8,4 +8,4 @@ error_reporting(E_ALL);
 initSessionIfNotStarted();
 $dotenv = Dotenv\Dotenv::createMutable(__DIR__);
 $dotenv->load();
-src\core\Bootstrap::do();
+src\core\Bootstrap::start();
