@@ -2,6 +2,8 @@
 
 namespace src\core;
 
+use src\support\Uri;
+
 class Route
 {
 
@@ -63,10 +65,48 @@ class Route
      */
     public static function middlewares(array $middlewares = []): self
     {
-        foreach ($middlewares as $middlewareKey => $middleware) {
-            (new $middleware)->execute();
+        if (str_contains(self::$lastUri, '{')) {
+            if (self::isCurrentRoute()) {
+                foreach ($middlewares as $middlewareKey => $middleware) {
+                    (new $middleware)->execute(self::$lastUri);
+                }
+            }
+        } else {
+            if (self::$lastUri === Uri::get()) {
+                foreach ($middlewares as $middlewareKey => $middleware) {
+                    (new $middleware)->execute(self::$lastUri);
+                }
+            }
         }
         return new self;
+    }
+
+    private static function isCurrentRoute(): bool
+    {
+
+        // Exemplo de valores
+
+        $browserUrl = Uri::get(); // URL do navegador
+        $routePattern = self::$lastUri; // Última rota registrada
+        $routeData = self::$routes['get'][self::$lastUri];
+        
+
+
+        // Substituir os parâmetros na rota pelo regex correspondente
+        $regexRoute = preg_replace_callback('/\{(.*?)\}/', function ($matches) use ($routeData) {
+            foreach ($routeData['bind'] as $bind) {
+                if ($bind['param'] === $matches[1]) {
+                    return '(' . $bind['regex'] . ')';
+                }
+            }
+            return $matches[0]; // Caso não encontre, mantém original
+        }, $routePattern);
+
+        // Criar regex completa para correspondência
+        $regexRoute = '#^' . $regexRoute . '$#';
+
+        // Verificar se a URL do navegador corresponde ao padrão da rota
+        return preg_match($regexRoute, $browserUrl);
     }
 
 
