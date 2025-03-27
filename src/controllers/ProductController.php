@@ -6,6 +6,7 @@ use Exception;
 use RedirectHeader;
 use src\exceptions\product\ProductStoreFailedException;
 use src\requests\product\StoreRequest;
+use src\requests\product\UpdateRequest;
 use src\services\product\ProductListService;
 use src\services\product\ProductStoreService;
 use src\support\View;
@@ -29,10 +30,12 @@ class ProductController
         }
     }
 
+
     function create(): View
     {
         return View::render('products.create');
     }
+
 
     function store(StoreRequest $request): RedirectHeader
     {
@@ -46,9 +49,33 @@ class ProductController
         }
     }
 
-
-    function varios(string $uuidv1, string $uuidv2)
+    function edit(int $id): View
     {
-        dd($uuidv1, $uuidv2);
+        $product = $this->productListService->find($id);
+        return View::render('products.edit', ['product' => $product]);
+    }
+
+    function delete(string $uuid): RedirectHeader
+    {
+        try {
+            $this->productStoreService->delete($uuid);
+            notification()->success("O produto foi deletado com sucesso");
+            return redirect()->route('products.index');
+        } catch (Exception $e) {
+            notification()->error($e->getMessage());
+            return redirect()->back();
+        }
+    }
+
+    function update(UpdateRequest $request, int $id): RedirectHeader
+    {
+        try {
+            $this->productStoreService->update($request->get(), $id);
+            notification()->success("O produto foi atualizado com sucesso");
+            return redirect()->route('products.index');
+        } catch (Exception $e) {
+            notification()->error($e->getMessage());
+            return redirect()->back();
+        }
     }
 }

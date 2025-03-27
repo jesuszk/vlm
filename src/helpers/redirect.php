@@ -14,12 +14,21 @@ function route(string $routeName, array $indexes = [])
     $r = findUriByName(Route::routes(), $routeName);
     if ($r) {
 
-        if (substr_count($r['uri'], '{') !== count($indexes))
-            throw new Exception('route.missing.parameters ' . $routeName, 500);
+        if (substr_count($r['uri'], '{') !== count($indexes)) {
+            preg_match_all('/\{(.*?)\}/', $r['uri'], $matches);
+            $keys = implode(', ', array_map(fn($item) => '{' . $item . '}', $matches[1]));
+            throw new Exception('route.missing.parameters: ' . $keys, 500);
+        }
+
 
         if (str_contains($r['uri'], '{')) {
-            foreach ($indexes as $key => $index) {
-                $r['uri'] = str_replace('{' . $key . '}', $index, $r['uri']);
+            preg_match_all('/\{(.*?)\}/', $r['uri'], $matches);
+            $keys = implode(', ', array_map(fn($item) => '{' . $item . '}', $matches[1]));
+
+            foreach ($indexes as $key => $value) {
+                if (!str_contains($r['uri'], '{' . $key . '}'))
+                    throw new Exception("route.missing.parameters: {$keys} " . '<br> passed: {' . $key . '} not found', 500);
+                $r['uri'] = str_replace('{' . $key . '}', $value, $r['uri']);
             }
         }
     }

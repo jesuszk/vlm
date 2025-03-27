@@ -9,11 +9,6 @@ use src\core\Route;
 Route::get('/products', ProductController::class, 'index')->name('products.index');
 Route::get('/products/create', ProductController::class, 'create')->name('products.create');
 Route::post('/products/store', ProductController::class, 'store')->name('products.store');
-
-
-Route::get('/{uuidv1}/{uuidv2}', ProductController::class, 'varios')
-    ->name('varios')
-    ->where([
-        'uuidv1' => 'uuid',
-        'uuidv2' => 'uuid',
-    ]);
+Route::get('/products/edit/{id}', ProductController::class, 'edit')->name('products.edit')->whereInt('id');
+Route::post('/products/update/{id}', ProductController::class, 'update')->name('products.update')->whereInt('id');
+Route::get('/products/delete/{uuid}/{name}', ProductController::class, 'delete')->name('products.delete')->whereUuid('uuid');

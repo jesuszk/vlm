@@ -3,8 +3,8 @@
 namespace src\services\product;
 
 use Exception;
+use src\exceptions\product\ProductFindFailedException;
 use src\exceptions\product\ProductListPaginatedFailedException;
-use src\exceptions\product\ProductStoreFailedException;
 use src\repositories\ProductRepository;
 
 class ProductListService
@@ -19,6 +19,15 @@ class ProductListService
             return $this->repo->select_paginated();
         } catch (Exception $e) {
             throw new ProductListPaginatedFailedException();
+        }
+    }
+
+    function find(int $id)
+    {
+        try {
+            return $this->repo->find($id);
+        } catch (Exception $e) {
+            throw new ProductFindFailedException(['id' => $id]);
         }
     }
 }
