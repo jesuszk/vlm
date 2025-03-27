@@ -8,6 +8,7 @@ use PDOException;
 use Ramsey\Uuid\Rfc4122\UuidV4;
 use src\database\Database;
 use src\exceptions\pdo\ColumnDoesntHaveADefaultValueException;
+use src\exceptions\pdo\TableOrViewNotFoundException;
 use stdClass;
 
 class Querio
@@ -20,6 +21,11 @@ class Querio
     protected array $bind;
     protected bool $selectIsOne;
 
+
+    function __construct()
+    {   
+        $this->set_db(Database::setConfig());
+    }
 
     function set_db(Database $db)
     {
@@ -220,7 +226,7 @@ class Querio
             if (str_contains($e->getMessage(), "doesn't have a default value")) {
                 throw new ColumnDoesntHaveADefaultValueException(['message from pdo' => $e->errorInfo[2]]);
             } else if (str_contains($e->getMessage(), 'Base table or view not found')) {
-                throw new ColumnDoesntHaveADefaultValueException(['message from pdo' => $e->errorInfo[2]]);
+                throw new TableOrViewNotFoundException(['message from pdo' => $e->errorInfo[2]]);
             }
             return false;
         }

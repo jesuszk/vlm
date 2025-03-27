@@ -5,7 +5,7 @@ namespace src\exceptions\pdo;
 use Exception;
 use src\traits\LogException;
 
-class ColumnDoesntHaveADefaultValueException extends Exception
+class TableOrViewNotFoundException extends Exception
 {
     private string $entity = 'pdo';
 

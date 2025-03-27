@@ -34,16 +34,32 @@ class Database
         return self::connect();
     }
 
-    static function local()
+    static function setConfig()
     {
-        self::config(
-            type: 'mysql',
-            host: 'localhost',
-            dbname: 'thezarkiumgroup',
-            username: 'root',
-            password: 'zarkium'
-        );
-        return self::get();
+        if (!empty($_ENV['DB_FROM_FILE'])) {
+            $config = require $_ENV['DB_FROM_FILE'];
+            self::config(
+                type: $config['DB_TYPE'],
+                host: $config['DB_HOST'],
+                dbname: $config['DB_NAME'],
+                username: $config['DB_USER'],
+                password: $config['DB_PASSWORD']
+            );
+        } else {
+            self::config(
+                type: $_ENV['DB_TYPE'],
+                host: $_ENV['DB_HOST'],
+                dbname: $_ENV['DB_NAME'],
+                username: $_ENV['DB_USER'],
+                password: $_ENV['DB_PASSWORD']
+            );
+        }
+        return new self;
+    }
+
+    static function instance(): PDO
+    {
+        return self::setConfig()::get();
     }
 
     /**
