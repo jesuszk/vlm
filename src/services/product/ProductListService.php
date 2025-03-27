@@ -18,7 +18,7 @@ class ProductListService
         try {
             return $this->repo->select_paginated();
         } catch (Exception $e) {
-            throw new ProductListPaginatedFailedException();
+            throw new ProductListPaginatedFailedException(['message:' => $e->getMessage()]);
         }
     }
 

@@ -7,6 +7,6 @@ class IsLoggedMiddleware
 {
     function execute(string $uri): void
     {
-       dd('executado: ' . $uri);
+    //    dd('executado: ' . $uri);
     }
 }

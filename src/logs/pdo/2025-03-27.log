@@ -1,0 +1,9 @@
+Error: Coluna com valor pendente | Code: 500 | When: 2025-03-27 11:36:19 | Content: {"message from pdo":"Table 'bd_amsted.products' doesn't exist"}
+Error: Coluna com valor pendente | Code: 500 | When: 2025-03-27 11:37:27 | Content: {"message from pdo":"Table 'bd_amsted.products' doesn't exist"}
+Error: Tabela ou view inexistente | Code: 500 | When: 2025-03-27 11:41:46 | Content: {"message from pdo":"Table 'bd_amsted.products' doesn't exist"}
+Error: Tabela ou view inexistente | Code: 500 | When: 2025-03-27 11:48:58 | Content: {"message from pdo":"Table 'bd_amsted.products' doesn't exist"}
+Error: Tabela ou view inexistente | Code: 500 | When: 2025-03-27 12:04:25 | Content: {"message from pdo":"Table 'bd_amsted.products' doesn't exist"}
+Error: Tabela ou view inexistente | Code: 500 | When: 2025-03-27 12:09:06 | Content: {"message from pdo":"Table 'bd_amsted.products' doesn't exist"}
+Error: Tabela ou view inexistente | Code: 500 | When: 2025-03-27 12:10:38 | Content: {"message from pdo":"Table 'bd_amsted.products' doesn't exist"}
+Error: Tabela ou view inexistente | Code: 500 | When: 2025-03-27 12:10:53 | Content: {"message from pdo":"Table 'bd_amsted.products' doesn't exist"}
+Error: Tabela ou view inexistente | Code: 500 | When: 2025-03-27 12:13:12 | Content: {"message from pdo":"Table 'bd_amsted.products' doesn't exist"}
