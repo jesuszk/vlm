@@ -5,10 +5,8 @@ namespace src\middlewares;
 
 class IsLoggedMiddleware
 {
-    function execute(): void
+    function execute(string $uri): void
     {
-        if (!isset($_SESSION['user_id'])) {
-           redirect()->route('login')->header();
-        }
+       dd('executado: ' . $uri);
     }
 }
