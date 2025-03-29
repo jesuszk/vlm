@@ -8,6 +8,7 @@ use PDOException;
 use Ramsey\Uuid\Rfc4122\UuidV4;
 use src\database\Database;
 use src\exceptions\pdo\ColumnDoesntHaveADefaultValueException;
+use src\exceptions\pdo\ColumnNotFoundException;
 use src\exceptions\pdo\TableOrViewNotFoundException;
 use stdClass;
 
@@ -23,7 +24,7 @@ class Querio
 
 
     function __construct()
-    {   
+    {
         $this->set_db(Database::setConfig());
     }
 
@@ -196,7 +197,9 @@ class Querio
                 $stmt = $this->db->prepare($this->queryString);
                 $r = $stmt->execute($this->bind ?? []);
                 if ($operation === 'insert')
-                    return $this->db->lastInsertId();
+                    return array_merge(['id' => $this->db->lastInsertId()], $this->bind);
+                else if ($operation === 'update')
+                    return $this->bind;
                 return $r;
             } else {
                 if ($this->selectIsOne)
@@ -227,6 +230,8 @@ class Querio
                 throw new ColumnDoesntHaveADefaultValueException(['message from pdo' => $e->errorInfo[2]]);
             } else if (str_contains($e->getMessage(), 'Base table or view not found')) {
                 throw new TableOrViewNotFoundException(['message from pdo' => $e->errorInfo[2]]);
+            } else if (str_contains($e->getMessage(), 'Column not found')) {
+                throw new ColumnNotFoundException(['message from pdo' => $e->errorInfo[2]]);
             }
             return false;
         }
@@ -368,7 +373,7 @@ class Querio
     /**
      * @return ?PDO
      */
-    function raw(): ?PDO
+    function getPDO(): ?PDO
     {
         return $this->db;
     }
@@ -379,16 +384,16 @@ class Querio
         return $this;
     }
 
-    function transactionCommit(): bool
+    function transactionCommit(): self
     {
         $this->db->commit();
-        return true;
+        return $this;
     }
 
-    function transactionRollback(): bool
+    function transactionRollback(): self
     {
         $this->db->rollback();
-        return false;
+        return $this;
     }
 
 
@@ -412,15 +417,15 @@ class Querio
     }
 
 
-    function pagination(int $rowsPerPage = 5): stdClass
+    function getPagination(int $itemsInPage = 5): stdClass
     {
         $stdclass = new stdClass();
 
         $raw = $this->finish();
         $pagina = (isset($_GET['page']) ? $_GET['page'] : 1) - 1;
-        $offset = $pagina * $rowsPerPage;
-        $paginated = $this->order("id", "DESC")->limit($rowsPerPage)->offset($offset)->finish(0);
-        $quantitiesOfPages = ceil(count($raw ? $raw : []) / $rowsPerPage);
+        $offset = $pagina * $itemsInPage;
+        $paginated = $this->order("id", "DESC")->limit($itemsInPage)->offset($offset)->finish(0);
+        $quantitiesOfPages = ceil(count($raw ? $raw : []) / $itemsInPage);
         $links = pagination($quantitiesOfPages);
 
 
@@ -429,24 +434,20 @@ class Querio
         $stdclass->offset = $offset;
         $stdclass->paginated = $paginated;
         $stdclass->quantitiesOfPages = $quantitiesOfPages;
-        $stdclass->quantitiesPerPage = $rowsPerPage;
+        $stdclass->quantitiesPerPage = $itemsInPage;
         $stdclass->links = $links;
 
         return $stdclass;
     }
 
 
-
-
-
-
     // Functions ready for uses
 
     /**
      * @param array $data
-     * @return bool
+     * @return bool|array<string, mixed>
      */
-    function store(array $data): bool
+    function create(array $data): bool|array
     {
         $data['uuid'] = UuidV4::uuid4()->toString();
         return $this->table($this->table)->insert($data)->finish();
@@ -454,17 +455,17 @@ class Querio
 
 
 
-    function find_by_id(int $id): stdClass|bool
+    function getById(int $id): stdClass|bool
     {
-        return $this->table($this->table)->selectOne()->where("id", "=", $id)->finish();
+        return $this->getByColumn("id", $id);
     }
 
-    function find_by_uuid(string $uuid): stdClass|bool
+    function getByUuid(string $uuid): stdClass|bool
     {
-        return $this->table($this->table)->selectOne()->where("uuid", "=", $uuid)->finish();
+        return $this->getByColumn("uuid", $uuid);
     }
 
-    function find_by_column(string $column, string $operation, string $value): stdClass|bool
+    function getByColumn(string $column, string $value, string $operation = "="): stdClass|bool
     {
         return $this->table($this->table)->selectOne()->where($column, $operation, $value)->finish();
     }
@@ -473,7 +474,7 @@ class Querio
      * @param int $id
      * @return bool
      */
-    function delete_by_id(int $id): bool
+    function deleteById(int $id): bool
     {
         return $this->table($this->table)->delete()->where('id', "=", $id)->finish();
     }
@@ -482,24 +483,45 @@ class Querio
      * @param int $iuud
      * @return bool
      */
-    function delete_by_uuid(string $uuid): bool
+    function deleteByUuid(string $uuid): bool
     {
         return $this->table($this->table)->delete()->where('uuid', "=", $uuid)->finish();
     }
 
-    function update_by_id(int $id, array $data)
+
+    function softDeleteById(int $id): bool
+    {
+        return $this->table($this->table)->softDelete()->where('id', "=", $id)->finish();
+    }
+
+    function softDeleteByUuid(string $uuid): bool
+    {
+        return $this->table($this->table)->softDelete()->where('uuid', "=", $uuid)->finish();
+    }
+
+
+    function updateById(int $id, array $data)
     {
         return $this->table($this->table)->update($data)->where("id", "=", $id)->finish();
     }
 
-    function update_by_uuid(string $uuid, array $data)
+    function updateByUuid(string $uuid, array $data)
     {
         return $this->table($this->table)->update($data)->where("uuid", "=", $uuid)->finish();
     }
 
-
-    function select_paginated()
+    function save()
     {
-        return $this->table($this->table)->select()->pagination();
+        if (isset($this->bind['id'])) {
+            return $this->updateById($this->bind['id'], $this->bind);
+        } else if (isset($this->bind['uuid'])) {
+            return $this->updateByUuid($this->bind['uuid'], $this->bind);
+        }
+        return $this->create($this->bind);
+    }
+
+    function getAll(array $fields = ['*']): array
+    {
+        return $this->table($this->table)->select($fields)->finish();
     }
 }

@@ -25,7 +25,7 @@ const notificationsToast = (type, message, local = "top-left", time = 5000) => {
   const { icon } = toastDetails[type];
   const text = message;
   const toast = document.createElement("li");
-  toast.className = `dyoxfy-toast ${type}`;
+  toast.className = `zarkify-toast ${type}`;
 
   toast.innerHTML = `<div class="column">
     <i class="fa-solid ${icon}"></i>

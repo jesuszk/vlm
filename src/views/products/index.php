@@ -1,43 +1,66 @@
-<?php $this->layout('templates/base', [
-    'webTitle' => 'Zarkium Store - Products',
+<?= $this->layout('templates/base', [
+    'title' => 'Products',
     'cardTitle' => 'Products',
-    'styles' => [css_directory('/table-responsive.css')]
+    'styles' => [
+        path()->css('/table-responsive.css'),
+    ]
 ]) ?>
 
 
+<form action="<?= route('products.store'); ?>" method="post">
+    <div class="row g-3">
+        <div class="col-12 col-md-4">
+            <label for="name" class="form-label fw-bold">Name <span class="">*</span></label>
+            <input type="text" class="form-control" name="name" placeholder="Name">
+        </div>
+
+        <div class="col-12 col-md-2">
+            <label for="price" class="form-label fw-bold">Price <span class="">*</span></label>
+            <input type="number" step="0.01" class="form-control" name="price" placeholder="Price">
+        </div>
+
+        <div class="col-12 col-md-2">
+            <label for="quantity" class="form-label fw-bold">Quantity <span class="">*</span></label>
+            <input type="number" class="form-control" name="quantity" placeholder="Quantity">
+        </div>
+
+        <div class="col-12 col-md-2">
+            <label for="control_stock" class="form-label fw-bold">Control Stock <span class="">*</span></label>
+            <select name="control_stock" id="control_stock" class="form-select" onchange="toggleValueMin()">
+                <option value="">Select Control Stock</option>
+                <option value="1">Yes</option>
+                <option value="0">No</option>
+            </select>
+        </div>
+
+        <div id="value-min" class="col-12 col-md-2">
+            <label for="value_min" class="form-label fw-bold">Value Min <span class="">*</span></label>
+            <input type="number" class="form-control" name="value_min" placeholder="Value Min">
+        </div>
+
+        <div class="col-12">
+            <button class="btn btn-company float-end">Create <i class="ph ph-paper-plane-tilt"></i></button>
+        </div>
+    </div>
+</form>
 
 
-<a href="" class="btn btn-sm btn-company float-end mb-3 d-flex align-items-center">New Product <i class="ph ph-plus ms-1"></i></a>
 
-<table class="table-responsive">
-    <thead>
-        <tr>
-            <th>Id</th>
-            <th>Name</th>
-            <th>Price</th>
-            <th>Amount</th>
-            <th>Control Stock?</th>
-            <th>In Value</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
+<?php $this->insert('products/table', ['products' => $products]) ?>
 
-    <tbody>
-        <?php if (isset($products->raw) && $products->raw) { ?>
-            <?php foreach ($products->paginated as $product) { ?>
-                <tr>
-                    <td><?= $product->id ?></td>
-                    <td><?= $product->name ?></td>
-                    <td><?= $product->price ?></td>
-                    <td><?= $product->amount ?></td>
-                    <td><?= $product->control_stock ?></td>
-                    <td><?= $product->price * $product->amount ?></td>
-                    <td>
-                        <a href="<?= route('products.delete', ['uuid' => $product->uuid, 'name' => $product->name]) ?>" class="btn btn-danger btn-sm">Delete <i class="ph ph-trash"></i></a>
-                        <a href="<?= route('products.edit', ['id' => $product->id]) ?>" class="btn btn-primary btn-sm">Edit <i class="ph ph-pencil"></i></a>
-                    </td>
-                </tr>
-            <?php } ?>
-        <?php } ?>
-    </tbody>
-</table>
+
+<script>
+    function toggleValueMin() {
+        const controlStock = document.getElementById('control_stock');
+        const valueMinDiv = document.getElementById('value-min');
+        const valueMinInput = valueMinDiv.querySelector('input');
+
+        if (controlStock.value !== '1') {
+            valueMinInput.disabled = true;
+            valueMinInput.value = '';
+        } else {
+            valueMinInput.disabled = false;
+        }
+    }
+    toggleValueMin();
+</script>

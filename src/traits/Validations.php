@@ -81,7 +81,7 @@ trait Validations
      * @param string $field
      * @return mixed
      */
-    public function isOptional(string $field): mixed
+    public function nullable(string $field): mixed
     {
         return Request::input($field);
     }

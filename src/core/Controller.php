@@ -30,21 +30,15 @@ class Controller
     {
         $params = $this->getParamsInRoute($router);
 
-
         /** @var Container */
         $container = $this->startContainerInjection();
         $controllerObject = $container->get($controller);
 
-
         /** @var RedirectUri|RedirectBack|RedirectRoute|View|Json|null */
         $response = $this->handleRequest($controller, $method, $controllerObject, $container, $params);
 
-
         if (!$response)
             throw new Exception("Controlller's return content empty: {$controller}", 500);
-
-
-
 
         if (in_array(true, [$response instanceof RedirectUri, $response instanceof RedirectRoute])) {
             header("Location: {$_ENV['APP_URL']}{$response->uri}");

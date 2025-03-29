@@ -57,8 +57,9 @@ function isWrongText(string $key)
  */
 function forgetSessions($sessions = []): void
 {
-    foreach ($sessions as $index => $session)
+    foreach ($sessions as $index => $session){
         if (isset($_SESSION[$session])) unset($_SESSION[$session]);
+    }
 }
 
 /**

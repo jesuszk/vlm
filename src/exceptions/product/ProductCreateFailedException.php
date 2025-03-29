@@ -5,15 +5,15 @@ namespace src\exceptions\product;
 use Exception;
 use src\traits\LogException;
 
-class ProductFindFailedException extends Exception
+class ProductCreateFailedException extends Exception
 {
-    private string $entity = 'product';
+    private string $entity = 'products';
 
     use LogException;
 
     function __construct(array $content = [])
     {
-        $message = 'Não foi possível realizar a listagem de produtos de maneira paginada';
+        $message = 'Não foi possível criar o produto';
         $code = 500;
         $this->log($message, $code, json_encode($content));
         return parent::__construct($message, $code);

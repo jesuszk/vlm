@@ -35,7 +35,7 @@ function route(string $routeName, array $indexes = [])
 
 
     if (!$r)
-        throw new Exception('Não foi possível encontrar uma rota com o nome: ' . $routeName);
+        throw new Exception('route.404: ' . $routeName);
     return $r['uri'];
 }
 

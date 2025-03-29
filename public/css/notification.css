@@ -9,12 +9,12 @@
   flex-wrap: wrap-reverse;
 }
 
-.notificationsToasts :where(.dyoxfy-toast, .column) {
+.notificationsToasts :where(.zarkify-toast, .column) {
   display: flex;
   align-items: center;
 }
 
-.notificationsToasts .dyoxfy-toast {
+.notificationsToasts .zarkify-toast {
   width: fit-content;
   position: relative;
   overflow: hidden;
@@ -45,7 +45,7 @@
   }
 }
 
-.notificationsToasts .dyoxfy-toast.hide {
+.notificationsToasts .zarkify-toast.hide {
   animation: hide_toast 0.3s ease forwards;
 }
 
@@ -67,7 +67,7 @@
   }
 }
 
-.dyoxfy-toast::before {
+.zarkify-toast::before {
   position: absolute;
   content: "";
   height: 3px;
@@ -83,57 +83,57 @@
   }
 }
 
-.dyoxfy-toast.success::before,
+.zarkify-toast.success::before,
 .btn#success {
   background: var(--success);
 }
 
-.dyoxfy-toast.error::before,
+.zarkify-toast.error::before,
 .btn#error {
   background: var(--error);
 }
 
-.dyoxfy-toast.warning::before,
+.zarkify-toast.warning::before,
 .btn#warning {
   background: var(--warning);
 }
 
-.dyoxfy-toast.info::before,
+.zarkify-toast.info::before,
 .btn#info {
   background: var(--info);
 }
 
-.dyoxfy-toast .column i {
+.zarkify-toast .column i {
   font-size: 1.75rem;
 }
 
-.dyoxfy-toast.success .column i {
+.zarkify-toast.success .column i {
   color: var(--success);
 }
 
-.dyoxfy-toast.error .column i {
+.zarkify-toast.error .column i {
   color: var(--error);
 }
 
-.dyoxfy-toast.warning .column i {
+.zarkify-toast.warning .column i {
   color: var(--warning);
 }
 
-.dyoxfy-toast.info .column i {
+.zarkify-toast.info .column i {
   color: var(--info);
 }
 
-.dyoxfy-toast .column span {
+.zarkify-toast .column span {
   font-size: 1.07rem;
   margin-left: 12px;
 }
 
-.dyoxfy-toast i:last-child {
+.zarkify-toast i:last-child {
   color: #aeb0d7;
   cursor: pointer;
 }
 
-.dyoxfy-toast i:last-child:hover {
+.zarkify-toast i:last-child:hover {
   color: var(--dark);
 }
 
@@ -153,7 +153,7 @@
     width: 95%;
   }
 
-  .notificationsToasts .dyoxfy-toast {
+  .notificationsToasts .zarkify-toast {
     width: 100%;
     font-size: 1rem;
     margin-left: 20px;

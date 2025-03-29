@@ -4,78 +4,34 @@ namespace src\controllers;
 
 use Exception;
 use RedirectHeader;
-use src\exceptions\product\ProductStoreFailedException;
-use src\requests\product\StoreRequest;
-use src\requests\product\UpdateRequest;
-use src\services\product\ProductListService;
-use src\services\product\ProductStoreService;
+use src\requests\products\ProductStoreRequest;
+use src\services\ProductService;
 use src\support\View;
 
 class ProductController
 {
-    function __construct(
-        private ProductStoreService $productStoreService,
-        private ProductListService $productListService,
-    ) {}
+    public function __construct(private ProductService $ProductService) {}
 
-    function index(): View
+    public function index()
     {
-        $products = null;
         try {
-            $products = $this->productListService->paginated();
-        } catch (Exception $e) {
-            notification()->warning($e->getMessage());
-        } finally {
+            $products = $this->ProductService->getAll();
             return View::render('products.index', ['products' => $products]);
-        }
-    }
-
-
-    function create(): View
-    {
-        return View::render('products.create');
-    }
-
-
-    function store(StoreRequest $request): RedirectHeader
-    {
-        try {
-            $productId = $this->productStoreService->store($request->get());
-            notification()->success("O produto foi criado com sucesso e está disponível, id: {$productId}");
-            return redirect()->route('products.index');
-        } catch (ProductStoreFailedException $e) {
+        } catch (Exception $e) {
             notification()->error($e->getMessage());
-            return redirect()->back();
+            return View::render('products.index', ['products' => []]);
         }
     }
 
-    function edit(int $id): View
-    {
-        $product = $this->productListService->find($id);
-        return View::render('products.edit', ['product' => $product]);
-    }
-
-    function delete(string $uuid): RedirectHeader
+    public function store(ProductStoreRequest $request): RedirectHeader
     {
         try {
-            $this->productStoreService->delete($uuid);
-            notification()->success("O produto foi deletado com sucesso");
+            $this->ProductService->create($request->get());
+            notification()->success('Product created successfully');
             return redirect()->route('products.index');
         } catch (Exception $e) {
             notification()->error($e->getMessage());
-            return redirect()->back();
-        }
-    }
-
-    function update(UpdateRequest $request, int $id): RedirectHeader
-    {
-        try {
-            $this->productStoreService->update($request->get(), $id);
-            notification()->success("O produto foi atualizado com sucesso");
             return redirect()->route('products.index');
-        } catch (Exception $e) {
-            notification()->error($e->getMessage());
-            return redirect()->back();
         }
     }
 }
