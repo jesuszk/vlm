@@ -11,6 +11,7 @@ class Validate
     use Validations;
     /** @var array<string, mixed> */
     private array $inputsValidation = [];
+    private array $validations = [];
 
     /**
      * @param string $validation
@@ -33,7 +34,7 @@ class Validate
      */
     private function validationExist(string $validation): void
     {
-        if (!method_exists($this, $validation)) 
+        if (!method_exists($this, $validation))
             throw new Exception("A validação {$validation} não existe");
     }
 
@@ -45,7 +46,7 @@ class Validate
      */
     public function validate(array $validationsFields): string|array
     {
-
+        $this->validations = $validationsFields;
         foreach ($validationsFields as $field => $validation) {
             $havePipes = str_contains($validation, '|');
             if (!$havePipes) {
@@ -97,7 +98,9 @@ class Validate
 
         if (in_array(null, $this->inputsValidation, true)) {
             foreach ($this->inputsValidation as $input => $value) {
-                if ($value === null) return $input;
+                if ($value === null && $this->validations[$input] !== 'nullable') {
+                    return $input;
+                }
             }
         }
 

@@ -1,0 +1,3 @@
+Error: Não foi possível criar o produto | Code: 500 | When: 2025-03-30 10:57:21 | Content: {"name":"1","price":"1","quantity":"1","control_stock":"N"}
+Error: Não foi possível criar o produto | Code: 500 | When: 2025-03-30 10:58:52 | Content: {"name":"test","price":"5","quantity":"5","control_stock":"N","value_min":0}
+Error: Não foi possível criar o produto | Code: 500 | When: 2025-03-30 11:01:13 | Content: {"name":"test","price":"1","quantity":"1","control_stock":"N","value_min":0}

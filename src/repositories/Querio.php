@@ -9,6 +9,7 @@ use Ramsey\Uuid\Rfc4122\UuidV4;
 use src\database\Database;
 use src\exceptions\pdo\ColumnDoesntHaveADefaultValueException;
 use src\exceptions\pdo\ColumnNotFoundException;
+use src\exceptions\pdo\IntegerValueException;
 use src\exceptions\pdo\TableOrViewNotFoundException;
 use stdClass;
 
@@ -226,12 +227,15 @@ class Querio
                 }
             }
         } catch (PDOException $e) {
+            
             if (str_contains($e->getMessage(), "doesn't have a default value")) {
                 throw new ColumnDoesntHaveADefaultValueException(['message from pdo' => $e->errorInfo[2]]);
             } else if (str_contains($e->getMessage(), 'Base table or view not found')) {
                 throw new TableOrViewNotFoundException(['message from pdo' => $e->errorInfo[2]]);
             } else if (str_contains($e->getMessage(), 'Column not found')) {
                 throw new ColumnNotFoundException(['message from pdo' => $e->errorInfo[2]]);
+            } else if (str_contains($e->getMessage(), 'Incorrect integer value')) {
+                throw new IntegerValueException(['message from pdo' => $e->errorInfo[2]]);
             }
             return false;
         }

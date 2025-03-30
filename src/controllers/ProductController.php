@@ -34,4 +34,16 @@ class ProductController
             return redirect()->route('products.index');
         }
     }
+
+    public function delete(string $uuid): RedirectHeader
+    {
+        try {
+            $this->ProductService->delete($uuid);
+            notification()->success('Product deleted successfully');
+        } catch (Exception $e) {
+            notification()->error($e->getMessage());
+        } finally {
+            return redirect()->route('products.index');
+        }
+    }
 }

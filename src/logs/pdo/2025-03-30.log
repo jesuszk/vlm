@@ -1,0 +1,4 @@
+Error: O valor deve ser um inteiro | Code: 500 | When: 2025-03-30 10:57:12 | Content: {"message from pdo":"Incorrect integer value: 'N' for column 'control_stock' at row 1"}
+Error: O valor deve ser um inteiro | Code: 500 | When: 2025-03-30 10:57:21 | Content: {"message from pdo":"Incorrect integer value: 'N' for column 'control_stock' at row 1"}
+Error: O valor deve ser um inteiro | Code: 500 | When: 2025-03-30 10:58:52 | Content: {"message from pdo":"Incorrect integer value: 'N' for column 'control_stock' at row 1"}
+Error: O valor deve ser um inteiro | Code: 500 | When: 2025-03-30 11:01:13 | Content: {"message from pdo":"Incorrect integer value: 'N' for column 'control_stock' at row 1"}

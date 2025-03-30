@@ -14,7 +14,7 @@ function formValidate(array $validations): array|bool
 {
     $data = (new Validate)->validate($validations);
     $isArray = is_array($data);
-
+    
     if ($isArray) return $data;
     else {
         Sessions::set('old', Request::excepts(['token']), true);
