@@ -46,4 +46,15 @@ class ProductController
             return redirect()->route('products.index');
         }
     }
+
+    public function edit(string $uuid)
+    {
+        try {
+            $product = $this->ProductService->getByUuid($uuid);
+            return View::render('products.edit', ['product' => $product]);
+        } catch (Exception $e) {
+            notification()->error($e->getMessage());
+            return redirect()->route('products.index');
+        }
+    }
 }

@@ -6,6 +6,7 @@ use Exception;
 use src\exceptions\product\ProductCreateFailedException;
 use src\exceptions\product\ProductDeleteFailedException;
 use src\exceptions\product\ProductGetAllFailedException;
+use src\exceptions\product\ProductGetByUuidException;
 use src\repositories\ProductRepository;
 
 class ProductService
@@ -35,7 +36,17 @@ class ProductService
     public function delete(string $uuid)
     {
         $deleted = $this->ProductRepository->deleteByUuid($uuid);
-        if (!$deleted) 
+        if (!$deleted)
             throw new ProductDeleteFailedException(['uuid' => $uuid]);
+    }
+
+    public function getByUuid(string $uuid)
+    {
+        try {
+            $product = $this->ProductRepository->getByUuid($uuid);
+            return $product;
+        } catch (Exception $e) {
+            throw new ProductGetByUuidException(['uuid' => $uuid]);
+        }
     }
 }

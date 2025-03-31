@@ -10,7 +10,7 @@
  */
 function isSelect(mixed $variableValue, mixed $value): string
 {
-  return ($variableValue === $value) ? "selected" : '';
+  return ($variableValue == $value) ? "selected" : '';
 }
 
 /**
