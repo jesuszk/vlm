@@ -97,7 +97,7 @@ class MakeControllerCommand extends Command
             $this->runCommand('make:service', $serviceName, $output, ['--full' => true]);
 
             // Executa o comando make:repository com a opção --table
-            $this->runCommand('make:repository', $repositoryName, $output, ['--table' => strtolower($tableName)]);
+            $this->runCommand('make:repository', $repositoryName, $output, ['--full' => true, '--table' => strtolower($tableName)]);
         }
 
         return Command::SUCCESS;

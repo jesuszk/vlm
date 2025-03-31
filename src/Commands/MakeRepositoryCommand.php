@@ -16,41 +16,58 @@ class MakeRepositoryCommand extends Command
             ->setName('make:repository')
             ->setDescription('Cria um novo repository.')
             ->addArgument('name', InputArgument::REQUIRED, 'Nome do repository')
-            ->addOption('table', null, InputOption::VALUE_REQUIRED, 'Nome da tabela para o repositório', 'table');
+            ->addOption('table', null, InputOption::VALUE_REQUIRED, 'Nome da tabela para o repositório')
+            ->addOption('full', null, InputOption::VALUE_NONE, 'Verifica se é full');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $full = $input->getOption('full');
         $name = $input->getArgument('name');
+        $newName = str_replace('Repository', '', $name);
         $directory = __DIR__ . "/../repositories";
         $filename = "$directory/{$name}.php";
         $optionTable = $input->getOption('table');
         if (!is_dir($directory)) {
             mkdir($directory, 0777, true);
         }
-    
+
         if (file_exists($filename)) {
             $output->writeln("<error>Repository {$name} already exists</error>");
             return Command::FAILURE;
         }
-    
-        $template = <<<PHP
+
+        if (!$full) {
+            $template = <<<PHP
     <?php
 
     namespace src\\repositories;
 
 
-    class ProductRepository extends Querio
+    class {$newName}Repository extends Querio
     {
         protected string \$table = '$optionTable';
     }
 
     PHP;
-    
+        } else {
+            $template = <<<PHP
+            <?php
+        
+            namespace src\\repositories;
+        
+        
+            class $name extends Querio
+            {
+                protected string \$table = '$optionTable';
+            }
+        
+            PHP;
+        }
+
         file_put_contents($filename, $template);
         $output->writeln("<info>Repository '$name' created successfully!</info>");
-    
+
         return Command::SUCCESS;
     }
-    
 }
