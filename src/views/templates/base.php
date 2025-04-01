@@ -19,7 +19,7 @@
             <div class="card-header">
                 <div class="name-and-logo">
                     <span class="d-flex align-items-center"><?= $cardTitle ?? null ?></span>
-                    <img src="<?= path()->images('/' . 'amsted' . '.png'); ?>" alt="Logo Empresa">
+                    <img src="<?= path()->images('/' . 'vellum' . '.png'); ?>" alt="Logo Empresa">
                 </div>
             </div>
             <div class="card-body">
